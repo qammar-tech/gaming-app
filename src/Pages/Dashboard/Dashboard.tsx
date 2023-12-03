@@ -105,12 +105,16 @@ export default function Dashboard() {
   };
 
   const handleSeriesPlaySubmit = () => {
-    // Add your logic to handle the series play input submission
-    console.log('Series Play input submitted:', seriesPlayInput);
-    navigate("/game_play", { state: { single_shot: false, count: seriesPlayInput } });
-    // Close the modal after handling the submission
-    closeModal();
+    if(seriesPlayInput) {
+      // Add your logic to handle the series play input submission
+      console.log('Series Play input submitted:', seriesPlayInput);
+      navigate("/game_play", { state: { single_shot: false, count: seriesPlayInput } });
+      // Close the modal after handling the submission
+      closeModal();
+      
+    }
   };
+
 
   const handleClick = (data:any) => {
     if(credits > 0 && credits !=null && credits != undefined){
@@ -177,7 +181,13 @@ export default function Dashboard() {
                           name="add_sensors"
                           //  defaultValue="1"
                           title='Add Sensor' 
-                          handleChange={(e:any) => setSensorName(e.target.value)}
+                          required={true}
+                          handleChange={(e:any) => {
+                            if(e.target.value) {
+                              setSensorName(e.target.value)
+                            }
+                          }}
+                          validationRules={{ required: 'Email is required' }}
                           />
                      
 
@@ -188,7 +198,7 @@ export default function Dashboard() {
                               text="Add"
                               style={{ marginBottom: '1.5rem' }} 
                               
-                              onClick={handleSeriesPlaySubmit}/>
+                              onClick={closeSensorModal}/>
           <Button
                               type="submit"
                               text="Close"

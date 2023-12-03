@@ -16,6 +16,7 @@ interface InputFieldProps {
   validationRules?: RegisterOptions<Record<string, string | number>>
   style?: React.CSSProperties
   disabled?:boolean,
+  required?:boolean,
   handleChange?: (e: ChangeEvent<HTMLInputElement>) => any;
 }
 
@@ -31,6 +32,7 @@ export default function InputField({
   handleChange,
   name,
   useReactHookForm = true,
+  required,
   validationRules = { required: false },
   ...props
 }: InputFieldProps) {
@@ -63,6 +65,7 @@ export default function InputField({
           defaultValue={defaultValue}
           value={defaultValue}
           disabled={disabled}
+          required={required}
           onChange={handleChange ? (e) => handleChange(e) : () => {}}
         />
         {type === 'password' && ( // Only show the eye icon for password input
