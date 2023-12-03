@@ -1,13 +1,13 @@
 import styles from './inputField.module.scss'
 import PasswordEye from '@/assets/icons/passwordEye.svg'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { UseFormRegister, RegisterOptions } from 'react-hook-form'
 
 interface InputFieldProps {
   type: string
-  label: string
+  label?: string
   name: string
-  title: string
+  title?: string
   register?: UseFormRegister<any> // Adjust the type based on your form data structure
   errors?: Record<string, unknown> // Use the correct type based on your version of react-hook-form
   useReactHookForm?: boolean
@@ -15,15 +15,20 @@ interface InputFieldProps {
   showPassword?: any
   validationRules?: RegisterOptions<Record<string, string | number>>
   style?: React.CSSProperties
+  disabled?:boolean,
+  handleChange?: (e: ChangeEvent<HTMLInputElement>) => any;
 }
 
 export default function InputField({
   type,
   label,
   showPassword,
+  defaultValue,
   title,
   style,
+  disabled,
   register,
+  handleChange,
   name,
   useReactHookForm = true,
   validationRules = { required: false },
@@ -39,7 +44,11 @@ export default function InputField({
 
   return (
     <div className={styles.mainDiv}>
-      <span className={styles.title}>{title}</span>
+      {
+        title ?
+        <span className={styles.title}>{title}</span>
+: ""
+      }
 
       <div className={styles['input-container']}>
         <input
@@ -51,6 +60,10 @@ export default function InputField({
           placeholder={label}
           {...props}
           style={{ ...style }}
+          defaultValue={defaultValue}
+          value={defaultValue}
+          disabled={disabled}
+          onChange={handleChange ? (e) => handleChange(e) : () => {}}
         />
         {type === 'password' && ( // Only show the eye icon for password input
           <img

@@ -1,15 +1,69 @@
-import { useState } from 'react'
-import Input from '../../Components/InputFields/InputField'
-import Button from '../../Components/Buttons/Button'
-import { Link } from 'react-router-dom'
-import Select from '../../Components/Select/Select'
+import { useState } from 'react';
+import Input from '../../Components/InputFields/InputField';
+import Button from '../../Components/Buttons/Button';
+import { Link } from 'react-router-dom';
+import Select from '../../Components/Select/Select';
+import axios from 'axios'; // Import axios
+
+import { useForm } from 'react-hook-form';
+
+type Inputs = {
+  name: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+};
+
 export default function SignUp() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const [, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedType, setSelectedType] = useState('individual');
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
+  const onSubmit = async (data: Inputs) => {
+    // formData contains the form values
+    const payload = {
+      ...data,
+      role: selectedType,
+    };
     
-    const [, setShowPassword] = useState(false)
-    const [loading] = useState(false)
-    const togglePasswordVisibility = () => {
-        setShowPassword((prevState) => !prevState)
+    console.log("--------- data ------- ", payload);
+
+    // Your API endpoint
+    const apiUrl = `http://localhost:3000/api/v1/users`;
+ 
+    try {
+      // setLoading(true);
+
+      // Use axios for the API call
+      const response = await axios.post(apiUrl, payload, { withCredentials: true });
+      console.log("=== respose", response);
+
+      if (response.status === 200) {
+        // Handle successful registration, e.g., redirect to login page
+        console.log('User registered successfully');
+        reset();
+      } else {
+        // Handle registration error
+        console.error('Registration failed');
       }
+    } catch (error) {
+      console.error('Error during registration:', error);
+    } finally {
+      // setLoading(false);
+    }
+  };
+ 
   return (
 <section className="bg-primeColor dark:bg-gray-900 opacity-90">
   <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -22,14 +76,17 @@ export default function SignUp() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white flex justify-center">
                   Sign up to your account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div>
                     <Input  
                     type="text"
                     label="Enter you full name"
                     title="Name"
                     style={{ marginBottom: '0.25rem' }}
-                    name="email"/>
+                    name="name"
+                    validationRules={{ required: 'Name is required' }}
+                    register={register}
+                    />
                   </div>
                   <div>
                     <Input  
@@ -37,7 +94,10 @@ export default function SignUp() {
                     label="Username or email"
                     title="Email"
                     style={{ marginBottom: '0.25rem' }}
-                    name="email"/>
+                    name="email"
+                    validationRules={{ required: 'Email is required' }}
+                    register={register}
+                    />
                   </div>
                   <div>
                   <Input
@@ -47,24 +107,28 @@ export default function SignUp() {
                     title="Password"
                     style={{ marginBottom: '0.25rem' }}
                     name="password"
-            />
+                    validationRules={{ required: 'Password is required' }}
+                    register={register}
+                  />
                   </div>
                   <div>
                   <Input
-              type="password"
-              label="Confirm Password"
-              showPassword={togglePasswordVisibility}
-              title="Confirm Password"
-              style={{ marginBottom: '0.25rem' }}
-              name="confirm-password"
+                  type="password"
+                  label="Confirm Password"
+                  showPassword={togglePasswordVisibility}
+                  title="Confirm Password"
+                  style={{ marginBottom: '0.25rem' }}
+                  name="repeatPassword"
+                  validationRules={{ required: 'Confirm Password is required' }}
+                  register={register}
             />
                   </div>
-                <Select label="Type"/>
+                <Select label="Role" setSelectedValueProp={setSelectedType}/>
                   <Button
                     type="submit"
                     text="Sign Up"
                     style={{ marginBottom: '0.25rem' }}
-                    disabled={loading}
+                    // disabled={loading}
                     />          
                     <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                       Already have an account?  <Link to="/login" className="text-primeColor font-bold">

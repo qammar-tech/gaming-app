@@ -2,7 +2,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import menuItems from './SideBarContent';
 import { useNavigate } from 'react-router-dom';
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 type LayoutProps = {
   children?: ReactNode
@@ -10,12 +10,28 @@ type LayoutProps = {
 
 export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
-
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  let token: any =localStorage.getItem('user')
+  token=JSON.parse(token)?.accessToken?.token
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown(!showProfileDropdown);
+  };
   const handleClick = (path: string) => {
-    // Navigate to the specified path
-    navigate(path);
+   if(path === 'logout'){
+    localStorage.removeItem('user')
+    navigate("/login")
+   }else{
+    console.log("===== lasjdfz",path);
+    
+     // Navigate to the specified path
+     navigate(path);
+   }
   }
-
+  useEffect(()=>{
+    if(!token){
+      return navigate("/login")
+    }
+  },[token])
   return (
     <div className="flex h-screen overflow-hidden">
 
@@ -23,7 +39,8 @@ export default function Layout({ children }: LayoutProps) {
       <div className="bg-primeBGColor w-64 p-4 overflow-y-auto" style={{ boxShadow: 'rgba(12, 21, 59, 0.2) 2px 0px 0px 1px' }}>
         <nav>
           <div style={{marginLeft:'30%'}}>
-        <button className="bg-white text-primeColor hidden md:flex items-center py-2 rounded-full border border-black px-5 ">
+        <button 
+        className="bg-white text-primeColor hidden md:flex items-center py-2 rounded-full border border-black px-5 ">
             <CgProfile size={20} className="mr-2" /> Profile
           </button>
           </div>
@@ -32,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
          
             {menuItems.map(({ icon, text, path }, index) => (
               <li key={index} className="py-4" style={{ boxShadow: '2px 2px 0px 0px rgba(31, 7, 87, 0.1)' }}>
-<div className="text-xl text-primeTextColor flex cursor-pointer w-[50%] rounded-full mx-auto p-2 hover:text-primeColor hover:bg-white hover:w-[70%] hover:w-70 shadow-right-prime" onClick={() => handleClick(path)}>
+                <div className="text-xl text-primeTextColor flex cursor-pointer w-[50%] rounded-full mx-auto p-2 hover:text-primeColor hover:bg-white hover:w-[70%] hover:w-70 shadow-right-prime" onClick={() => handleClick(path)}>
                   {icon} {text}
                 </div>
               </li>
@@ -61,9 +78,25 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           {/* Cart button */}
-          <button className="bg-white text-primeColor hidden md:flex items-center py-2 rounded-full border border-black px-5 ">
+          <button 
+        onClick={toggleProfileDropdown}
+          className="bg-white text-primeColor hidden md:flex items-center py-2 rounded-full border border-black px-5 ">
             <CgProfile size={20} className="mr-2" /> Profile
           </button>
+          {showProfileDropdown && 
+
+              <div className="absolute text-white right-1 pt-3 pb-3 bg-primeBGColor w-48 rounded-lg shadow-lg" style={{marginTop:'13.5rem'}}>
+              {/* Profile dropdown content */}
+              {/* This could contain user info, settings, etc. */}
+              <ul>
+              <li className="p-1 flex justify-center cursor-pointer" onClick={() => handleClick("/profile")}>Profile</li>
+              <li className="p-1 flex justify-center cursor-pointer" onClick={() => handleClick("/settings")}>Settings</li>
+              <li className="p-1 flex justify-center cursor-pointer" onClick={() => handleClick("logout")}>Logout</li>
+              {/* Add more items as needed */}
+              </ul>
+              </div>
+
+              }
         </div>
 
         {/* Content Area */}
