@@ -20,7 +20,10 @@ function App() {
       <Routes>
         { 
           !token ?
-        <Route path="/login" element={<Login />}></Route>
+            <>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/sign-up" element={<SignUp />}></Route>
+            </>
           :
       <>
       <Route

@@ -31,7 +31,7 @@ export default function Login() {
           "credits": 2,
           "role":"organization"
       }
-  }
+    }
   }
     const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ export default function Login() {
     console.log("--------- data ------- ", mockUser);
     localStorage.setItem('user', JSON.stringify(mockUser));
     let token: any =localStorage.getItem('user')
-    token=JSON.parse(token).accessToken.token
+    token=JSON.parse(token)?.accessToken.token
     if(token){
       navigate("/dashboard")
     }

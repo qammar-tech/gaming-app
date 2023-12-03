@@ -19,7 +19,7 @@ export default function GamePlay() {
   ];
 
   useEffect(() => {
-    setPlayType(state.single_shot);
+    setPlayType(state?.single_shot);
     setShotSeries(Number(state?.count));
   }, [state]);
 
@@ -41,7 +41,7 @@ export default function GamePlay() {
             <Select
               label="Game Stats"
               options={selectOptions}
-              className='w-[25rem] h-[3rem]'
+              className='w-[26rem] h-[3rem]'
               setSelectedValueProp={handleSelect}
             />
           </div>
@@ -56,7 +56,7 @@ export default function GamePlay() {
       ) : (
         <>
             <div  className='mt-[10rem]'>
-          {[...Array(shotSeries)].map((_, index) => (
+          {[...Array(shotSeries)]?.map((_, index) => (
               <div key={index} className='flex justify-around'>
               <Input
                 type="text"
@@ -67,7 +67,7 @@ export default function GamePlay() {
               <Select
                 label={`Game Stats ${index + 1}`}
                 options={selectOptions}
-                className='w-[20rem] h-[3rem]'
+                className='w-[22rem] h-[3rem]'
                 setSelectedValueProp={handleSelect}
               />
               </div>
